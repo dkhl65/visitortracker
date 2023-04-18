@@ -7,28 +7,16 @@ const { Pool } = require("pg");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.set("view engine", "ejs");
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-const sortByDate = (a, b) => {
-  if (a.accessdate > b.accessdate) {
-    return -1;
-  }
-  if (a.accessdate > b.accessdate) {
-    return 1;
-  }
-  return 0;
-};
-
 app.get("/", (req, res) => {
   pool
     .query("SELECT * from visitors")
     .then((sql) => {
-      sql.rows.sort(sortByDate);
-      res.render("index", { data: sql.rows });
+      res.send(sql.rows);
     })
     .catch((e) => {
       console.error(e.stack);
